@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#define N 1000
+
+int contaVocali(char str[],int lun);
+int controllaPresVocale(char str2[],char vocale,int numVoc,int lun2);
+int f(char str1[],char str2[],int lun1,int lun2);
+
+int main(){
+    char str1[N],str2[N];
+    int lun1,lun2;
+    printf("Inserisci prima parola:\n");
+    scanf("%s",str1);
+    printf("Inserisci seconda parola:\n");
+    scanf("%s",str2);
+    lun1=strlen(str1);
+    lun2=strlen(str2);
+    if(f(str1, str2, lun1, lun2)!=0)
+        printf("%s e %s sono intonate.\n",str1,str2);
+    else
+        printf("%s e %s NON sono intonate.\n",str1,str2);
+    return 0;
+    
+}
+int f(char str1[],char str2[],int lun1,int lun2)
+{
+    int numVoc1,numVoc2,i,cont=0;
+    numVoc1=contaVocali(str1, lun1);
+    numVoc2=contaVocali(str2, lun2);
+    if(numVoc1!=numVoc2)
+        return 0;
+    for (i=0; i<lun1; i++) {
+        if(str1[i]=='a'||str1[i]=='e'||str1[i]=='i'||str1[i]=='o'||str1[i]=='u'){
+            cont++;
+            if(controllaPresVocale(str2, str1[i], cont, lun2)==0)
+                return 0;
+        }
+    }
+    return 1;
+}
+int contaVocali(char str[],int lun)
+{
+    int i,cont=0;
+    for (i=0; i<lun; i++) {
+        if(str[i]=='a'||str[i]=='e'||str[i]=='i'||str[i]=='o'||str[i]=='u')
+            cont++;
+    }
+    return cont;
+}
+int controllaPresVocale(char str2[],char vocale,int numVoc,int lun2)
+{
+    int i,cont=0;
+    for (i=0; i<lun2; i++) {
+        if(str2[i]=='a'||str2[i]=='e'||str2[i]=='i'||str2[i]=='o'||str2[i]=='u'){
+            cont++;
+            if(cont==numVoc)
+                if(str2[i]!=vocale)
+                    return 0;
+        }
+    }
+    return 1;
+}
