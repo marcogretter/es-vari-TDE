@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define N 5
+
+typedef struct EL {
+    char cognome[N], nome[N];
+    struct EL * left, * right;
+} node;
+
+typedef node * tree;
+
+typedef struct node{
+    char nome[N], cognome[N];
+    struct node *next;
+} nodo;
+
+typedef nodo *Lista;
+
+int cercaOmonimi(tree t,char nome[],char cognome[]);
+int analizzaTuttoAlbero(tree t);
+Lista InsInOrd( Lista lista, char elem[],char nome[] );
+Lista InsInFondo( Lista lista,char elem[],char cognome[] );
+Lista f(tree t,int elem);
+
+Lista InsInOrd( Lista lista, char elem[],char nome[] ) {
+    
+    Lista punt, puntCor = lista, puntPrec = NULL;
+    while ( (puntCor != NULL && strcmp(elem, puntCor->cognome)>0)||((strcmp(elem,puntCor->cognome)==0)&&(strcmp(nome,puntCor->nome)>0) )) {
+        puntPrec = puntCor; puntCor = puntCor->next;
+    }
+    punt = malloc(sizeof(nodo));
+    strcpy(punt->cognome,elem);strcpy(punt->nome,nome); punt->next= puntCor;
+    if ( puntPrec != NULL ) { puntPrec->next = punt; return lista; } else return punt;
+}
+Lista f(tree t,int elem)
+{
+    Lista lis=NULL;
+    if(t==NULL)
+        return lis;
+    if(lis==NULL&&elem!=0)
+        lis=InsInFondo(lis, t->nome, t->cognome);
+    else
+        lis=InsInOrd(lis, t->nome, t->cognome);
+    lis=f(t->right,1);
+    lis=f(t->left, 1);
+    return lis;
+}
+Lista InsInFondo( Lista lista,char elem[],char cognome[] ) {
+    Lista punt;
+    if( lista==NULL ) {
+        punt = malloc( sizeof(nodo) );
+        punt->next = NULL;
+        strcpy(punt->nome, elem);
+        strcpy(punt->cognome, cognome);
+        punt->next=NULL;
+        return punt;
+    } else {
+        lista->next = InsInFondo( lista->next, elem,cognome );
+        return lista;
+    }
+}
+int analizzaTuttoAlbero(tree t)
+{
+    if(t==NULL)
+        return 1;
+    if(cercaOmonimi(t, t->nome, t->cognome)==0)
+        return 0;
+    return analizzaTuttoAlbero(t->right)&&analizzaTuttoAlbero(t->left);
+}
+
+
+int cercaOmonimi(tree t,char nome[],char cognome[])
+{
+    if(t==NULL)
+        return 1;
+    if((strcmp(nome, t->nome)==0)&&(strcmp(cognome, t->cognome)==0))
+        return 0;
+    return cercaOmonimi(t->right, nome, cognome)&&cercaOmonimi(t->left, nome, cognome);
+}
+
