@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define N 5
+
+typedef struct Date {
+    int giorno;
+    int mese;
+    int anno;
+} Data;
+
+typedef struct {
+    char cognome[N], nome[N];
+    int eta; /* età della persona */
+} Persona;
+
+typedef struct Item {
+    Persona p;
+    int punti;
+    struct Item * next;
+}Socio;
+
+typedef Socio * ListaDiSoci;
+
+typedef struct Node {
+    Data d;
+    Persona * ordineDiArrivo; /* la lista contiene i concorrenti in ordine di arrivo al traguardo */
+    struct Node * next; } Maratona;
+
+typedef Maratona * ListaDiMaratone;
+
+void punteggioInPiu(int punteggio,Persona p,ListaDiSoci lisOfSoci);
+void attribuisciPunti(ListaDiSoci lisOfSoci,ListaDiMaratone lisofMara);
+int trovaEtaMaggiorePunteggio(ListaDiSoci lisOfSoci);
+
+int f(ListaDiSoci lisOfSoci,ListaDiMaratone lisOfMara)
+{
+    int vero=1;
+    if(lisOfMara==NULL)
+        return 0;
+    while (lisOfMara->next!=NULL) {
+        if(vero==3&&((lisOfMara->d.giorno!=lisOfMara->next->d.giorno)||(lisOfMara->d.mese!=lisOfMara->next->d.mese)||lisOfMara->d.anno!=lisOfMara->next->d.anno))
+            attribuisciPunti(lisOfSoci, lisOfMara);
+        if(vero==1){
+            attribuisciPunti(lisOfSoci, lisOfMara);
+            vero=3;
+        }
+        lisOfMara=lisOfMara->next;
+    }
+    return trovaEtaMaggiorePunteggio(lisOfSoci);
+}
+void attribuisciPunti(ListaDiSoci lisOfSoci,ListaDiMaratone lisofMara)
+{
+    int cont=0;
+    while (lisofMara!=NULL) {
+        cont++;
+        if(cont==1)
+            punteggioInPiu(10, *lisofMara->ordineDiArrivo, lisOfSoci);
+        if(cont==2)
+            punteggioInPiu(9, *lisofMara->ordineDiArrivo, lisOfSoci);
+        if(cont==3)
+            punteggioInPiu(8, *lisofMara->ordineDiArrivo, lisOfSoci);
+        if(cont==4)
+            punteggioInPiu(7, *lisofMara->ordineDiArrivo, lisOfSoci);
+        if(cont==5)
+            punteggioInPiu(6, *lisofMara->ordineDiArrivo, lisOfSoci);
+        if(cont==6)
+            punteggioInPiu(5, *lisofMara->ordineDiArrivo, lisOfSoci);
+        if(cont==7)
+            punteggioInPiu(4, *lisofMara->ordineDiArrivo, lisOfSoci);
+        if(cont==8)
+            punteggioInPiu(3, *lisofMara->ordineDiArrivo, lisOfSoci);
+        if(cont==9)
+            punteggioInPiu(2, *lisofMara->ordineDiArrivo, lisOfSoci);
+        if(cont==10)
+            punteggioInPiu(1, *lisofMara->ordineDiArrivo, lisOfSoci);
+        lisofMara=lisofMara->next;
+    }
+    return;
+}
+void punteggioInPiu(int punteggio,Persona p,ListaDiSoci lisOfSoci)
+{
+    if(lisOfSoci==NULL)
+        return;
+    while (lisOfSoci!=NULL) {
+        if((strcmp(lisOfSoci->p.cognome, p.cognome)==0)&&(strcmp(lisOfSoci->p.nome, p.nome)==0)&&(lisOfSoci->p.eta==p.eta))
+            lisOfSoci->punti+=punteggio;
+        lisOfSoci=lisOfSoci->next;
+    }
+    return;
+}
+int trovaEtaMaggiorePunteggio(ListaDiSoci lisOfSoci)
+{
+    int maxPunti=0,eta=0,vero=1;
+    if(lisOfSoci==NULL)
+        return 0;
+    while (lisOfSoci!=NULL) {
+        if(vero==2)
+            if(maxPunti<lisOfSoci->punti){
+                maxPunti=lisOfSoci->punti;
+                eta=lisOfSoci->p.eta;
+            }
+        if(vero==1){
+            maxPunti=lisOfSoci->punti;
+            eta=lisOfSoci->p.eta;
+            vero=2;
+        }
+        lisOfSoci=lisOfSoci->next;
+    }
+    return eta;
+}
