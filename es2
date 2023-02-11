@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct EL {
+    int dato;
+    struct EL * left, * right;
+} node;
+
+typedef node * tree;
+
+int valAss(int a);
+int funzione(int difMin,int elem,tree t);
+int f(tree t);
+
+int f(tree t)
+{
+    if(t==NULL)
+        return 0;
+    return funzione(t->dato-0, t->dato, t);
+}
+int funzione(int difMin,int elem,tree t)
+{
+    int d,s;
+    if(t==NULL)
+        return difMin;
+    if(valAss(t->dato-elem)<difMin)
+        difMin=valAss(t->dato-elem);
+    d=funzione(difMin, t->dato, t->right);
+    s=funzione(difMin, t->dato, t->left);
+    if(d<s)
+        return d;
+    return s;
+}
+int valAss(int a)
+{
+    if(a<0)
+        return (-1)*a;
+    return a;
+}
