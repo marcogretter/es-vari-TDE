@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define N 5
+
+typedef struct el{
+    char dato;
+    int cont;
+    struct el *next;
+} list;
+
+typedef list *Lista;
+
+int verificaSeInArray(char elem,char v[],int lunArray);
+int contaQuanteVolteInMatrice(char M[][N],char elem);
+Lista InsInFondo( Lista lista,char elem,int num );
+
+Lista f(char M[][N], int R)
+{
+    int r,c,j=0,i;
+    Lista lis=NULL;
+    char v[N*N];
+    int v2[N*N];
+    for (r=0; r<N; r++) {
+        for (c=0; c<N; c++) {
+            if(verificaSeInArray(M[r][c], v, j)!=0){
+                v[j]=M[r][c];
+                j++;
+            }
+        }
+    }
+    if(j!=R)
+        return NULL;
+    for (i=0; i<j; i++) {
+        v2[i]=contaQuanteVolteInMatrice(M,v[i]);
+    }
+    for (i=0; i<R; i++) {
+        lis=InsInFondo(lis, v[i], v2[i]);
+    }
+    return lis;
+}
+int verificaSeInArray(char elem,char v[],int lunArray)
+{
+    int i;
+    for (i=0; i<lunArray; i++) {
+        if(v[i]==elem)
+            return 0;
+    }
+    return 1;
+}
+int contaQuanteVolteInMatrice(char M[][N],char elem)
+{
+    int r,c,cont=0;
+    for (r=0; r<N; r++) {
+        for (c=0; c<N; c++) {
+            if(M[r][c]==elem)
+                cont++;
+        }
+    }
+    return cont;
+}
+Lista InsInFondo( Lista lista,char elem,int num ) {
+    Lista punt;
+    if( lista==NULL ) {
+        punt = malloc( sizeof(list) );
+        punt->next= NULL;
+        punt->dato = elem;
+        punt->cont=num;
+        return punt;
+    } else {
+        lista->next = InsInFondo( lista->next, elem,num);
+        return lista;
+    }
+}
