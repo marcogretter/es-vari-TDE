@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define N 1000
+#define NS 20000
+#define NC 2000
+#define NE 400000
+
+typedef struct {
+    int giorno, mese, anno;
+} Data;
+typedef struct {
+    char matricola[7], nome[N], cognome[N];
+    Data dataNascita;
+    int valido;
+} Studente;
+typedef Studente Studenti[NS];
+typedef struct {
+    char codice[11], titolo[N];
+    int numCrediti;
+    int valido;
+} Corso;
+typedef Corso Corsi[NC];
+typedef struct {
+    char codiceCorso[11], matricolaStudente[N];
+    int voto;
+    Data data;
+    int valido;
+} Esame;
+typedef Esame Esami[NE];
+
+int cfuCorsoDaTrovare(char codCorso[],Corsi cor);
+float media(Esami es,char matr[],Corsi cor);
+void f(Esami es, Corsi cor, Studenti stu, Studenti stuBravi);
+
+void f(Esami es, Corsi cor, Studenti stu, Studenti stuBravi)
+{
+    int i,j=0;
+    for (i=0; i<NS; i++) {
+        if(media(es,stu[i].matricola,cor)>27){
+            strcpy(stuBravi[j].matricola, stu[i].matricola);
+            strcpy(stuBravi[j].nome, stu[i].nome);
+            strcpy(stuBravi[j].cognome, stu[i].cognome);
+            stuBravi[j].dataNascita.anno=stu[i].dataNascita.anno;
+            stuBravi[j].dataNascita.mese=stu[i].dataNascita.mese;
+            stuBravi[j].dataNascita.giorno=stu[i].dataNascita.giorno;
+            stuBravi[j].valido=stu[i].valido;
+            j++;
+        }
+    }
+    return;
+}
+float media(Esami es,char matr[],Corsi cor)
+{
+    int i;
+    float sum=0,cont=0;
+    for (i=0; i<NE; i++) {
+        if(strcmp(es[i].matricolaStudente, matr)==0&&es[i].valido==1){
+            sum+=(es[i].voto*cfuCorsoDaTrovare(es[i].codiceCorso, cor));
+            cont+=cfuCorsoDaTrovare(es[i].codiceCorso, cor);
+        }
+    }
+    return sum/cont;
+}
+int cfuCorsoDaTrovare(char codCorso[],Corsi cor)
+{
+    int i;
+    for (i=0; i<NC; i++) {
+        if(strcmp(cor[i].codice, codCorso)==0)
+            return cor[i].numCrediti;
+    }
+    return 0;
+}
